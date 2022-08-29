@@ -127,7 +127,6 @@ def stoMatFill(microstateMatrix, stoMatrix, microstateNum):
     else:
         
         # State we are looking at
-        
         i = microstateNum
         
         state = microstateMatrix[i]
@@ -139,6 +138,7 @@ def stoMatFill(microstateMatrix, stoMatrix, microstateNum):
         ustates = detUpStates(state)
         
         
+        # Diagonal of the matrix
         for l in range(Nmax):
             
             if(state[l]==0):
@@ -245,7 +245,7 @@ def stoMatFill(microstateMatrix, stoMatrix, microstateNum):
                 
                         stoMatrix[i,i] = stoMatrix[i,i] - b2
                     
-                    
+        # Rest of the matrix
         # Loop for study of the down states            
         for k in range(len(dstates)):
         
@@ -329,7 +329,7 @@ def stoMatFill(microstateMatrix, stoMatrix, microstateNum):
         
             # Which site has gain or loose a stator 
             # final state - old state
-            UpTrans = transState - state
+           # UpTrans = transState - state
         
             DownTrans = state - transState
         
@@ -416,12 +416,12 @@ def testStoMatrix(stoMatrix,tolerance):
 
 """ Control parameters """
 # number of binding sites (> 2 needed to avoid ambiguity with PBC)
-Nmax = 3
+Nmax = 5
 #assert Nmax > 2, f"number greater than 2 expected, got: Nmax = {Nmax}"
 
 # kinetic rates
-J = 0.0
-mu = 0.0
+J = 0
+mu = 1
 
 a0 = 1./2.*(1 - np.tanh(-mu/2.))
 b0 =  1./2.*(1 - np.tanh(mu/2.))
@@ -447,7 +447,19 @@ for i in range(len(enumMicrostates)):
     stoMatFill(microstateMatrix, stoMatrix,i)
 
 # test if colums sum zero
-testStoMatrix(stoMatrix,1e-10)
+testStoMatrix(stoMatrix,1e-14)
+
+#%%
+
+Tsum = np.zeros(len(enumMicrostates))
+
+for i in range(len(enumMicrostates)):
+    
+    Tsum[i] = sum(stoMatrix[:,i])
+    
+    if(Tsum[i]<1e-14):
+        
+        Tsum[i] = 0.0
 
 #%%
 
